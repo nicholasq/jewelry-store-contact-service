@@ -24,10 +24,13 @@ dependencies {
     implementation("jakarta.annotation:jakarta.annotation-api")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+    implementation("io.micronaut:micronaut-management")
+    implementation("io.micronaut.cache:micronaut-cache-caffeine")
     runtimeOnly("ch.qos.logback:logback-classic")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mongodb")
     testImplementation("org.testcontainers:testcontainers")
+    testImplementation("io.micronaut.test:micronaut-test-rest-assured:3.4.0")
     implementation("io.micronaut:micronaut-validation")
 
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")

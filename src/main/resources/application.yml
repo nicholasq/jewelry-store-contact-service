@@ -6,3 +6,11 @@ netty:
   default:
     allocator:
       max-order: 3
+db:
+  name: 'contact'
+  collection: 'contact'
+firestore:
+  db:
+    name: 'contact'
+    collection: 'contact'
+    url: ${FIRESTORE_URL:`https://contact.firebaseio.com`}

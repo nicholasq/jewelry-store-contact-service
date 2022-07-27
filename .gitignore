@@ -13,3 +13,4 @@ out/
 .classpath
 .factorypath
 service-account.json
+*.private.env.json

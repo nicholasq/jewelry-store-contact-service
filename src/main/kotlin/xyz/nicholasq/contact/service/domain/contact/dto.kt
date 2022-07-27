@@ -6,7 +6,7 @@ import javax.validation.constraints.NotEmpty
 @Introspected
 data class Contact constructor(
     var id: String?,
-    @field:NotEmpty var name: String?,
+    @field:NotEmpty var name: String,
     var email: String?,
     var phone: String?,
     var address: String?,
@@ -14,5 +14,4 @@ data class Contact constructor(
     var jobTitle: String?,
     var notes: String?
 ) {
-    constructor() : this(null, null, null, null, null, null, null, null)
 }

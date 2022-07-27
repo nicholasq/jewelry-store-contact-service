@@ -4,7 +4,6 @@ import com.mongodb.client.result.InsertOneResult
 import jakarta.inject.Singleton
 import kotlinx.coroutines.reactive.awaitFirst
 import org.bson.BsonObjectId
-import org.bson.types.ObjectId
 import org.litote.kmongo.coroutine.toList
 import org.slf4j.LoggerFactory
 
@@ -61,35 +60,5 @@ open class DefaultContactService(
         contactEventService.delete(deleteContactEvent(id))
 
         return deleted
-    }
-}
-
-fun ContactEntity.toContact(): Contact {
-    return with(this) {
-        Contact(
-            id.toString(),
-            name,
-            email,
-            phone,
-            address,
-            company,
-            jobTitle,
-            notes
-        )
-    }
-}
-
-fun Contact.toContactEntity(): ContactEntity {
-    return with(this) {
-        ContactEntity(
-            if (id != null) ObjectId(id) else null,
-            name,
-            email,
-            phone,
-            address,
-            company,
-            jobTitle,
-            notes
-        )
     }
 }

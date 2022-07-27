@@ -1,0 +1,13 @@
+POST {{protocol}}{{host}}/api/v1/contact
+Content-Type: application/json
+
+{
+  "id": null,
+  "name": "Joe Doe",
+  "email": "joe@yahoo.com",
+  "phone": "",
+  "address": "",
+  "company": "",
+  "jobTitle": "",
+  "notes": ""
+}

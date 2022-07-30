@@ -58,9 +58,16 @@ class ContactControllerTest : TestPropertyProvider {
     @Test
     @Order(2)
     fun createContact() {
-        val contact = Contact().apply {
-            name = "John Doe"
-        }
+        val contact = Contact(
+            id = null,
+            name = "John Doe",
+            email = null,
+            phone = null,
+            address = null,
+            company = null,
+            jobTitle = null,
+            notes = null
+        )
         firstContact = contactClient.create(contact)
         assertNotEquals(contact, firstContact)
     }
@@ -92,9 +99,17 @@ class ContactControllerTest : TestPropertyProvider {
     @Test
     @Order(6)
     fun listContacts() {
-        val first = Contact().apply {
-            name = "John Doe"
-        }
+        val first = Contact(
+            id = null,
+            name = "Jane Doe",
+            email = null,
+            phone = null,
+            address = null,
+            company = null,
+            jobTitle = null,
+            notes = null
+        )
+
         val second = first.copy(name = "Jane Doe")
         contactClient.create(first)
         contactClient.create(second)

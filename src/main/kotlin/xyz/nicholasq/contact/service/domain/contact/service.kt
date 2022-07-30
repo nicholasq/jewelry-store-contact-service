@@ -2,9 +2,7 @@ package xyz.nicholasq.contact.service.domain.contact
 
 import com.mongodb.client.result.InsertOneResult
 import jakarta.inject.Singleton
-import kotlinx.coroutines.reactive.awaitFirst
 import org.bson.BsonObjectId
-import org.litote.kmongo.coroutine.toList
 import org.slf4j.LoggerFactory
 
 interface ContactService {
@@ -25,7 +23,7 @@ open class DefaultContactService(
 
     override suspend fun findById(id: String): Contact {
         log.debug("findById() - id: $id")
-        return contactRepository.findById(id).awaitFirst().toContact()
+        return contactRepository.findById(id).toContact()
     }
 
     override suspend fun findAll(): List<Contact> {
@@ -35,9 +33,9 @@ open class DefaultContactService(
 
     override suspend fun create(contact: Contact): Contact {
         log.debug("create() - contact: $contact")
-        val insertResult: InsertOneResult = contactRepository.create(contact.toContactEntity()).awaitFirst()
+        val insertResult: InsertOneResult = contactRepository.save(contact.toContactEntity())
         val id = (insertResult.insertedId as BsonObjectId).value.toString()
-        val savedContact = contactRepository.findById(id).awaitFirst().toContact()
+        val savedContact = contactRepository.findById(id).toContact()
 
         contactEventService.create(savedContact.toContactEvent(ContactEventType.CREATE))
 
@@ -46,7 +44,7 @@ open class DefaultContactService(
 
     override suspend fun update(contact: Contact): Contact {
         log.debug("update() - contact: $contact")
-        val updatedContact = contactRepository.update(contact.toContactEntity()).awaitFirst().toContact()
+        val updatedContact = contactRepository.update(contact.toContactEntity()).toContact()
 
         contactEventService.create(updatedContact.toContactEvent(ContactEventType.UPDATE))
 
@@ -55,7 +53,7 @@ open class DefaultContactService(
 
     override suspend fun delete(id: String): Boolean {
         log.debug("delete() - id: $id")
-        val deleted = contactRepository.delete(id).awaitFirst()
+        val deleted = contactRepository.delete(id)
 
         contactEventService.delete(deleteContactEvent(id))
 

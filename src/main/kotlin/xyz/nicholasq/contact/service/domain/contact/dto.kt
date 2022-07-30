@@ -4,7 +4,7 @@ import io.micronaut.core.annotation.Introspected
 import javax.validation.constraints.NotEmpty
 
 @Introspected
-data class Contact constructor(
+data class Contact(
     var id: String?,
     @field:NotEmpty var name: String,
     var email: String?,
@@ -13,5 +13,4 @@ data class Contact constructor(
     var company: String?,
     var jobTitle: String?,
     var notes: String?
-) {
-}
+)

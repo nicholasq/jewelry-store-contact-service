@@ -11,21 +11,21 @@ import com.mongodb.reactivestreams.client.MongoClient
 import com.mongodb.reactivestreams.client.MongoCollection
 import io.micronaut.context.annotation.Primary
 import jakarta.inject.Singleton
+import kotlinx.coroutines.reactive.awaitFirst
 import org.bson.types.ObjectId
+import org.litote.kmongo.coroutine.toList
 import org.litote.kmongo.eq
 import org.litote.kmongo.reactivestreams.findOne
-import org.reactivestreams.Publisher
-import reactor.core.publisher.Mono
 import xyz.nicholasq.contact.service.infrastructure.FirestoreConfiguration
 import xyz.nicholasq.contact.service.infrastructure.MongoDbConfiguration
 import javax.validation.Valid
 
 interface ContactRepository {
-    fun findById(id: String): Publisher<ContactEntity>
-    fun findAll(): Publisher<ContactEntity>
-    fun create(@Valid contact: ContactEntity): Publisher<InsertOneResult>
-    fun update(@Valid contact: ContactEntity): Publisher<ContactEntity>
-    fun delete(id: String): Publisher<Boolean>
+    suspend fun findById(id: String): ContactEntity
+    suspend fun findAll(): List<ContactEntity>
+    suspend fun save(@Valid contact: ContactEntity): InsertOneResult
+    suspend fun update(@Valid contact: ContactEntity): ContactEntity
+    suspend fun delete(id: String): Boolean
 }
 
 @Singleton
@@ -38,26 +38,28 @@ open class MongoDbContactRepository(
     private val collection: MongoCollection<ContactEntity> = mongoClient.getDatabase(mongoConf.name)
         .getCollection(mongoConf.collection, ContactEntity::class.java)
 
-    override fun findById(id: String): Publisher<ContactEntity> {
-        return collection.findOne(ContactEntity::id eq ObjectId(id))
+    override suspend fun findById(id: String): ContactEntity {
+        return collection.findOne(ContactEntity::id eq ObjectId(id)).awaitFirst()
     }
 
-    override fun findAll(): Publisher<ContactEntity> {
-        return collection.find()
+    override suspend fun findAll(): List<ContactEntity> {
+        return collection.find().toList()
     }
 
-    override fun create(contact: ContactEntity): Publisher<InsertOneResult> {
-        return collection.insertOne(contact)
+    override suspend fun save(contact: ContactEntity): InsertOneResult {
+        return collection.insertOne(contact).awaitFirst()
     }
 
-    override fun update(contact: ContactEntity): Publisher<ContactEntity> {
-        return Mono.from(collection.findOneAndReplace(eq("_id", contact.id), contact))
-            .flatMap { Mono.from(collection.find(eq("_id", it.id)).first()) }
+    override suspend fun update(contact: ContactEntity): ContactEntity {
+        // Apparently it can return the object before or after the update. It just feels safer to
+        // update then fetch and return that.
+        val returned = collection.findOneAndReplace(eq("_id", contact.id), contact).awaitFirst()
+        return findById(returned.id.toString())
     }
 
-    override fun delete(id: String): Publisher<Boolean> {
-        return Mono.from(collection.deleteOne(eq("_id", ObjectId(id))))
-            .map { it.deletedCount > 0L }
+    override suspend fun delete(id: String): Boolean {
+        val deletedCount = collection.deleteOne(eq("_id", ObjectId(id))).awaitFirst().deletedCount
+        return deletedCount > 0L
     }
 }
 
@@ -78,23 +80,23 @@ open class FirestoreContactRepository(
         collection = firestoreConf.collection
     }
 
-    override fun findById(id: String): Publisher<ContactEntity> {
+    override suspend fun findById(id: String): ContactEntity {
         TODO("Not yet implemented")
     }
 
-    override fun findAll(): Publisher<ContactEntity> {
+    override suspend fun findAll(): List<ContactEntity> {
         TODO("Not yet implemented")
     }
 
-    override fun create(contact: ContactEntity): Publisher<InsertOneResult> {
+    override suspend fun save(contact: ContactEntity): InsertOneResult {
         TODO("Not yet implemented")
     }
 
-    override fun update(contact: ContactEntity): Publisher<ContactEntity> {
+    override suspend fun update(contact: ContactEntity): ContactEntity {
         TODO("Not yet implemented")
     }
 
-    override fun delete(id: String): Publisher<Boolean> {
+    override suspend fun delete(id: String): Boolean {
         TODO("Not yet implemented")
     }
 }

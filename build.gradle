@@ -51,7 +51,7 @@ dependencies {
 
 
 application {
-    mainClass.set("jewelry.store.contact.service.ApplicationKt")
+    mainClass.set("xyz.nicholasq.contact.service.ApplicationKt")
 }
 java {
     sourceCompatibility = JavaVersion.toVersion("17")
@@ -75,7 +75,7 @@ micronaut {
     testRuntime("junit5")
     processing {
         incremental(true)
-        annotations("jewelry.store.contact.service.*")
+        annotations("xyz.nicholasq.contact.service.*")
     }
 }
 
